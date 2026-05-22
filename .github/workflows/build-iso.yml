@@ -1,0 +1,36 @@
+name: Build ISO
+on:
+  schedule:
+    - cron: "0 12 1 * *"
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build-iso:
+    name: Build ISO
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Install BlueBuild Cli
+        run: bash <(curl -s https://raw.githubusercontent.com/blue-build/cli/main/install.sh)
+      - name: Generate ISO
+        run: bluebuild generate-iso --iso-name DuneOS.iso image ghcr.io/raroh73/duneos:latest
+      - name: Upload ISO
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: ./DuneOS.iso
+          archive: false
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 40
+      - name: Upload Checksum
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: ./DuneOS.iso-CHECKSUM
+          archive: false
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 40

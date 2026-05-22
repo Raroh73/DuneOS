@@ -1,0 +1,48 @@
+name: duneos
+description: Custom OS based on Fedora.
+base-image: quay.io/fedora/fedora-bootc
+image-version: latest
+modules:
+  - type: dnf
+    repos:
+      copr:
+        - raroh73/dunepkgs
+      files:
+        - microsoft.repo
+      nonfree: rpmfusion
+    install:
+      packages:
+        - bazaar
+        - code
+        - flatpak
+        - gdm
+        - git
+        - glibc-all-langpacks
+        - gnome-backgrounds
+        - gnome-initial-setup
+        - gnome-shell
+        - plymouth
+        - podman
+        - ptyxis
+        - steam
+  - type: default-flatpaks
+    configurations:
+      - scope: system
+        notify: false
+      - scope: user
+        notify: false
+  - type: systemd
+    system:
+      enabled:
+        - bootc-fetch-apply-updates.timer
+  - type: files
+    files:
+      - source: system
+        destination: /
+  - type: os-release
+    properties:
+      ID: duneos
+      ID_LIKE: fedora
+      NAME: DuneOS
+      PRETTY_NAME: DuneOS
+  - type: signing
