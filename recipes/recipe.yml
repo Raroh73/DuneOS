@@ -11,6 +11,7 @@ modules:
         - microsoft.repo
       nonfree: rpmfusion
     install:
+      install-weak-deps: false
       packages:
         - bazaar
         - code
